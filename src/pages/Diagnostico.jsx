@@ -5,22 +5,25 @@ import { useNavigate } from 'react-router-dom';
 function Diagnostico() {
   const navigate = useNavigate();
 
-  // 1. AQUÍ ESTÁN LAS VARIABLES QUE FALTABAN
+  // Estados para manejar la imagen y los resultados
   const [imagen, setImagen] = useState(null);
   const [preview, setPreview] = useState(null);
   const [resultado, setResultado] = useState(null);
   const [cargando, setCargando] = useState(false);
 
-  // 2. BLOQUE DE SEGURIDAD (Si no hay token, te saca)
+  // === 🛡️ EL GUARDIA DE SEGURIDAD ===
   useEffect(() => {
+    // Buscamos el token en el bolsillo del navegador
     const token = localStorage.getItem('token');
+    
+    // Si NO hay token, lo mandamos fuera
     if (!token) {
-      alert("Debes iniciar sesión para usar el Doctor de Plantas 🔒");
+      alert("🔒 Acceso denegado: Debes iniciar sesión para usar esta herramienta.");
       navigate('/login');
     }
   }, [navigate]);
+  // ===================================
 
-  // 3. FUNCIONES DE LA CÁMARA Y ENVÍO
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -40,10 +43,12 @@ function Diagnostico() {
     setCargando(true);
 
     try {
+      // NOTA: Aquí ya usamos la dirección de la NUBE (Render)
       const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/diagnostico', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setResultado(respuesta.data.resultado);
+      
     } catch (error) {
       console.log(error);
       alert("Error al conectar con el servidor.");
@@ -54,7 +59,7 @@ function Diagnostico() {
 
   return (
     <div style={{ padding: '20px', textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
-      {/* Título con sombra para que se lea sobre el fondo oscuro */}
+      
       <h2 style={{ textShadow: '2px 2px 4px #000' }}>Doctor de Plantas 🌿</h2>
       <p style={{ textShadow: '1px 1px 2px #000' }}>Sube una foto de la hoja afectada para recibir un diagnóstico completo.</p>
 
@@ -89,7 +94,7 @@ function Diagnostico() {
 
       </form>
 
-      {/* === SECCIÓN DE RESULTADOS === */}
+      {/* RESULTADOS */}
       {resultado && (
         <div style={{ marginTop: '30px', padding: '25px', backgroundColor: 'rgba(255, 255, 255, 0.95)', borderRadius: '15px', border: '1px solid #2ecc71', textAlign: 'left', color: '#333' }}>
           
