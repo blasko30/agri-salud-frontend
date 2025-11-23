@@ -1,0 +1,88 @@
+/* === VARIABLES DE COLORES (Para mantener consistencia) === */
+:root {
+  --color-primario: #2ecc71; /* Verde Agri-Salud */
+  --color-secundario: #3498db; /* Azul Agua */
+  --color-oscuro: #2c3e50;
+  --color-texto: #ffffff;
+}
+
+/* === ESTILOS GENERALES DEL CUERPO === */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  
+  /* IMAGEN DE FONDO: Campo de cultivo con filtro oscuro */
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6)), /* Capa oscura */
+    url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1770&auto=format&fit=crop'); /* Imagen */
+  
+  background-size: cover;      /* Cubrir toda la pantalla */
+  background-position: center; /* Centrar la imagen */
+  background-attachment: fixed;/* El fondo se queda quieto al bajar */
+  background-repeat: no-repeat;
+  
+  color: var(--color-texto);
+  min-height: 100vh; /* Asegura que ocupe al menos el 100% de la altura */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === ENLACES Y NAVEGACIÓN === */
+a {
+  color: var(--color-texto);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: var(--color-primario); /* Se pone verde al pasar el mouse */
+}
+
+/* === INPUTS Y FORMULARIOS === */
+/* Esto asegura que los campos de texto sean legibles sobre el fondo oscuro */
+input, select, textarea {
+  font-family: inherit;
+  color: #333; /* Texto negro dentro de los inputs */
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input:focus {
+  outline: 2px solid var(--color-primario);
+}
+
+/* === BOTONES === */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+button:active {
+  transform: scale(0.98); /* Efecto de presionar */
+}
+
+/* === IMÁGENES === */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* === SCROLLBAR (Para que se vea moderno en Chrome/Edge) === */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a; 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555; 
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primario); 
+}
