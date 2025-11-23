@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import axios from 'axios'; // Importamos la herramienta para hablar con el backend
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Register() {
-  // Aquí guardamos lo que el usuario escribe
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -10,69 +11,74 @@ function Register() {
   });
 
   const [mensaje, setMensaje] = useState('');
+  const [error, setError] = useState('');
 
-  // Función que actualiza los datos cuando escribes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Función que se ejecuta al dar clic en "Registrarse"
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Evita que se recargue la página
+    e.preventDefault();
     try {
-      // Aquí conectamos con TU servidor backend
-     const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/user/register', formData);
-console.log(respuesta); // <--- Al usarla aquí, el error desaparecerá
+      await axios.post('https://agri-salud-backend.onrender.com/api/user/register', formData);
+      setMensaje('¡Usuario creado! Redirigiendo al login...');
+      setError('');
       
-      setMensaje('¡Agricultor registrado con éxito! Ahora puedes iniciar sesión.');
-    } catch (error) {
-      setMensaje('Hubo un error: ' + (error.response?.data || 'Intenta de nuevo'));
+      // Esperamos 2 segundos y lo mandamos al login automáticamente
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+
+    } catch {
+      setError('Error: El correo ya existe o los datos son inválidos');
     }
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
-      <h2>Registro Agri-Salud 🌱</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Nombre:</label><br/>
-          <input 
-            type="text" 
-            name="nombre" 
-            onChange={handleChange} 
-            required 
-            style={{ width: '100%', padding: '8px' }}
-          />
-        </div>
-        
-        <div style={{ marginBottom: '10px' }}>
-          <label>Correo:</label><br/>
-          <input 
-            type="email" 
-            name="email" 
-            onChange={handleChange} 
-            required 
-            style={{ width: '100%', padding: '8px' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '10px' }}>
-          <label>Contraseña:</label><br/>
-          <input 
-            type="password" 
-            name="password" 
-            onChange={handleChange} 
-            required 
-            style={{ width: '100%', padding: '8px' }}
-          />
-        </div>
-
-        <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>
-          Registrarse
-        </button>
-      </form>
+    <div style={{ padding: '20px', maxWidth: '400px', margin: '50px auto' }}>
       
-      {mensaje && <p style={{ color: 'green', marginTop: '10px' }}>{mensaje}</p>}
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.9)',
+        padding: '30px',
+        borderRadius: '15px',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+        textAlign: 'center'
+      }}>
+
+        <h2 style={{ color: '#2c3e50', marginTop: 0 }}>Crear Cuenta 🌱</h2>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <div>
+            <label style={{ display: 'block', textAlign: 'left', marginBottom: '5px', color: '#333', fontWeight: 'bold' }}>Nombre:</label>
+            <input type="text" name="nombre" onChange={handleChange} required style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }}/>
+          </div>
+          
+          <div>
+            <label style={{ display: 'block', textAlign: 'left', marginBottom: '5px', color: '#333', fontWeight: 'bold' }}>Correo:</label>
+            <input type="email" name="email" onChange={handleChange} required style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }}/>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', textAlign: 'left', marginBottom: '5px', color: '#333', fontWeight: 'bold' }}>Contraseña:</label>
+            <input type="password" name="password" onChange={handleChange} required style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }}/>
+          </div>
+
+          <button type="submit" style={{ padding: '12px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '5px', fontSize: '1rem', fontWeight: 'bold', marginTop: '10px' }}>
+            Registrarse
+          </button>
+        </form>
+        
+        {mensaje && <p style={{ color: 'green', marginTop: '10px', fontWeight: 'bold' }}>{mensaje}</p>}
+        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+
+        <p style={{ marginTop: '20px', color: '#555' }}>
+          ¿Ya tienes cuenta? <br/>
+          <Link to="/login" style={{ color: '#2ecc71', fontWeight: 'bold' }}>
+            Inicia Sesión aquí
+          </Link>
+        </p>
+
+      </div>
     </div>
   );
 }
