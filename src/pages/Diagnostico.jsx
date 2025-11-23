@@ -73,7 +73,7 @@ function Diagnostico() {
           📸 Tomar / Subir Foto
         </label>
 
-        <input id="cameraInput" type="file" accept="image/*" capture="environment" onChange={handleImageChange} style={{ display: 'none' }} />
+        <input id="cameraInput" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
 
         {preview && (
           <div style={{ marginTop: '10px' }}>
