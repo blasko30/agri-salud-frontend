@@ -43,10 +43,10 @@ function Diagnostico() {
     setCargando(true);
 
     try {
-      // NOTA: Aquí ya usamos la dirección de la NUBE (Render)
-      const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/diagnostico', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      // Volvemos a apuntar a la Nube para producción
+       const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/diagnostico', formData, {
+       headers: { 'Content-Type': 'multipart/form-data' }
+});
       setResultado(respuesta.data.resultado);
       
     } catch (error) {
