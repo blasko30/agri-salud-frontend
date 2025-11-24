@@ -5,24 +5,19 @@ import { useNavigate } from 'react-router-dom';
 function Diagnostico() {
   const navigate = useNavigate();
 
-  // Estados para manejar la imagen y los resultados
   const [imagen, setImagen] = useState(null);
   const [preview, setPreview] = useState(null);
   const [resultado, setResultado] = useState(null);
   const [cargando, setCargando] = useState(false);
 
-  // === 🛡️ EL GUARDIA DE SEGURIDAD ===
+  // === 🛡️ GUARDIA DE SEGURIDAD ===
   useEffect(() => {
-    // Buscamos el token en el bolsillo del navegador
     const token = localStorage.getItem('token');
-    
-    // Si NO hay token, lo mandamos fuera
     if (!token) {
-      alert("🔒 Acceso denegado: Debes iniciar sesión para usar esta herramienta.");
+      alert("🔒 Acceso denegado: Debes iniciar sesión.");
       navigate('/login');
     }
   }, [navigate]);
-  // ===================================
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -43,15 +38,23 @@ function Diagnostico() {
     setCargando(true);
 
     try {
-      // Volvemos a apuntar a la Nube para producción
-       const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/diagnostico', formData, {
-       headers: { 'Content-Type': 'multipart/form-data' }
-});
+      // 1. RECUPERAMOS EL TOKEN DEL BOLSILLO
+      const token = localStorage.getItem('token');
+
+      // 2. ENVIAMOS LA FOTO + EL TOKEN AL SERVIDOR
+      // Asegúrate de que esta URL sea la de tu Render
+      const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/diagnostico', formData, {
+        headers: { 
+            'Content-Type': 'multipart/form-data',
+            'auth-token': token 
+        }
+      });
+
       setResultado(respuesta.data.resultado);
       
     } catch (error) {
       console.log(error);
-      alert("Error al conectar con el servidor.");
+      alert("Error al conectar con el servidor. Revisa tu conexión.");
     } finally {
       setCargando(false);
     }
@@ -73,6 +76,7 @@ function Diagnostico() {
           📸 Tomar / Subir Foto
         </label>
 
+        {/* Input sin 'capture' para permitir elegir Galería */}
         <input id="cameraInput" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
 
         {preview && (
