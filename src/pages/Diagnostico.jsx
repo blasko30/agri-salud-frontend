@@ -10,7 +10,7 @@ function Diagnostico() {
   const [resultado, setResultado] = useState(null);
   const [cargando, setCargando] = useState(false);
 
-  // === 🛡️ GUARDIA DE SEGURIDAD ===
+  // ===  GUARDIA DE SEGURIDAD ===
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -38,10 +38,10 @@ function Diagnostico() {
     setCargando(true);
 
     try {
-      // 1. RECUPERAMOS EL TOKEN DEL BOLSILLO
+      // RECUPERAMOS EL TOKEN DEL BOLSILLO
       const token = localStorage.getItem('token');
 
-      // 2. ENVIAMOS LA FOTO + EL TOKEN AL SERVIDOR
+      // ENVIAMOS LA FOTO + EL TOKEN AL SERVIDOR
       // Asegúrate de que esta URL sea la de tu Render
       const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/diagnostico', formData, {
         headers: { 
