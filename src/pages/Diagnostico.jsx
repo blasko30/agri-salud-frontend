@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown'; // <--- IMPORTANTE: El lector
+import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 
 function Diagnostico() {
@@ -15,7 +15,6 @@ function Diagnostico() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert(" Acceso denegado: Debes iniciar sesión.");
       navigate('/login');
     }
   }, [navigate]);
@@ -40,16 +39,12 @@ function Diagnostico() {
 
     try {
       const token = localStorage.getItem('token');
-
-      // ENVIAMOS LA FOTO AL SERVIDOR
       const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/diagnostico', formData, {
         headers: { 
             'Content-Type': 'multipart/form-data',
             'auth-token': token 
         }
       });
-
-      // Guardamos la respuesta tal cual llega (Texto Markdown)
       setResultado(respuesta.data.resultado);
       
     } catch (error) {
@@ -63,22 +58,26 @@ function Diagnostico() {
   return (
     <div style={{ padding: '20px', textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
       
-      <h2 style={{ textShadow: '2px 2px 4px #000', color: 'white' }}>Doctor de Plantas 🌿</h2>
-      <p style={{ textShadow: '1px 1px 2px #000', color: '#eee' }}>Sube una foto de la hoja afectada para recibir un diagnóstico completo.</p>
+      <h2 style={{ textShadow: '2px 2px 4px #000', color: 'white', marginBottom: '30px' }}>Doctor de Plantas 🌿</h2>
 
-      <div style={{ background: 'rgba(255,255,255,0.9)', padding: '20px', borderRadius: '15px', marginBottom: '20px' }}>
+      {/* --- CAMBIO AQUÍ ---
+          Quitamos el background blanco, el padding y el borde.
+          Solo dejamos un margen inferior para separarlo del resultado.
+      */}
+      <div style={{ marginBottom: '30px' }}>
           
           {/* VISTA PREVIA */}
           {preview && (
-            <div style={{ marginBottom: '15px' }}>
-              <img src={preview} alt="Vista previa" style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }} />
+            <div style={{ marginBottom: '20px' }}>
+              <img src={preview} alt="Vista previa" style={{ maxWidth: '100%', maxHeight: '350px', borderRadius: '15px', boxShadow: '0 8px 20px rgba(0,0,0,0.5)', border: '3px solid white' }} />
             </div>
           )}
 
           {/* BOTÓN DE SUBIDA */}
           <label style={{ 
-              backgroundColor: '#2ecc71', color: 'white', padding: '12px 25px', 
-              borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold', display: 'inline-block'
+              backgroundColor: '#2ecc71', color: 'white', padding: '12px 30px', fontSize: '1.1rem',
+              borderRadius: '30px', cursor: 'pointer', fontWeight: 'bold', display: 'inline-block',
+              boxShadow: '0 4px 10px rgba(0,0,0,0.3)', transition: 'all 0.3s ease'
           }}>
             📸 Tomar / Subir Foto
             <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
@@ -87,29 +86,34 @@ function Diagnostico() {
           {/* BOTÓN DE ANALIZAR */}
           {imagen && !cargando && (
              <button onClick={handleSubmit} style={{ 
-                 display: 'block', margin: '20px auto 0', padding: '10px 30px', 
+                 display: 'block', margin: '20px auto 0', padding: '12px 40px', 
                  backgroundColor: '#3498db', color: 'white', border: 'none', 
-                 borderRadius: '5px', fontSize: '1.1rem', cursor: 'pointer', fontWeight: 'bold'
+                 borderRadius: '30px', fontSize: '1.2rem', cursor: 'pointer', fontWeight: 'bold',
+                 boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
              }}>
                  🔍 Analizar Planta
              </button>
           )}
 
-          {cargando && <p style={{ marginTop: '15px', fontWeight: 'bold', color: '#555' }}>Analizando cultivo... ⏳</p>}
+          {/* --- CAMBIO AQUÍ ---
+              Cambiamos el color del texto de carga a BLANCO con sombra negra
+              para que se lea bien sobre el fondo oscuro.
+          */}
+          {cargando && <p style={{ marginTop: '20px', fontWeight: 'bold', color: 'white', fontSize: '1.2rem', textShadow: '1px 1px 3px black' }}>Analizando cultivo... ⏳</p>}
       </div>
 
-      {/* === ZONA DE RESULTADO (LECTOR DE MARKDOWN) === */}
+      {/* === ZONA DE RESULTADO === */}
       {resultado && (
         <div style={{ 
             textAlign: 'left', 
             background: 'rgba(255, 255, 255, 0.95)', 
             padding: '30px', 
-            borderRadius: '15px', 
-            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            borderRadius: '20px', 
+            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
             color: '#2c3e50',
-            lineHeight: '1.6'
+            lineHeight: '1.7',
+            backdropFilter: 'blur(5px)'
         }}>
-            {/* ESTA ES LA CLAVE: ReactMarkdown lee el texto bonito */}
             <ReactMarkdown>{resultado}</ReactMarkdown>
         </div>
       )}
