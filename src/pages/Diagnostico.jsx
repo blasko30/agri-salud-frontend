@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown'; // <--- IMPORTANTE: El lector
 import { useNavigate } from 'react-router-dom';
 
 function Diagnostico() {
@@ -14,7 +15,7 @@ function Diagnostico() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert("🔒 Acceso denegado: Debes iniciar sesión.");
+      alert(" Acceso denegado: Debes iniciar sesión.");
       navigate('/login');
     }
   }, [navigate]);
@@ -38,11 +39,9 @@ function Diagnostico() {
     setCargando(true);
 
     try {
-      // RECUPERAMOS EL TOKEN DEL BOLSILLO
       const token = localStorage.getItem('token');
 
-      // ENVIAMOS LA FOTO + EL TOKEN AL SERVIDOR
-      // Asegúrate de que esta URL sea la de tu Render
+      // ENVIAMOS LA FOTO AL SERVIDOR
       const respuesta = await axios.post('https://agri-salud-backend.onrender.com/api/diagnostico', formData, {
         headers: { 
             'Content-Type': 'multipart/form-data',
@@ -50,86 +49,71 @@ function Diagnostico() {
         }
       });
 
+      // Guardamos la respuesta tal cual llega (Texto Markdown)
       setResultado(respuesta.data.resultado);
       
     } catch (error) {
       console.log(error);
-      alert("Error al conectar con el servidor. Revisa tu conexión.");
+      alert("Error al conectar con el servidor.");
     } finally {
       setCargando(false);
     }
   };
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ padding: '20px', textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
       
-      <h2 style={{ textShadow: '2px 2px 4px #000' }}>Doctor de Plantas 🌿</h2>
-      <p style={{ textShadow: '1px 1px 2px #000' }}>Sube una foto de la hoja afectada para recibir un diagnóstico completo.</p>
+      <h2 style={{ textShadow: '2px 2px 4px #000', color: 'white' }}>Doctor de Plantas 🌿</h2>
+      <p style={{ textShadow: '1px 1px 2px #000', color: '#eee' }}>Sube una foto de la hoja afectada para recibir un diagnóstico completo.</p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-        
-        <label htmlFor="cameraInput" style={{ 
-            backgroundColor: '#2ecc71', color: 'white', padding: '15px 30px', 
-            borderRadius: '50px', cursor: 'pointer', fontWeight: 'bold',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
-        }}>
-          📸 Tomar / Subir Foto
-        </label>
+      <div style={{ background: 'rgba(255,255,255,0.9)', padding: '20px', borderRadius: '15px', marginBottom: '20px' }}>
+          
+          {/* VISTA PREVIA */}
+          {preview && (
+            <div style={{ marginBottom: '15px' }}>
+              <img src={preview} alt="Vista previa" style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }} />
+            </div>
+          )}
 
-        {/* Input sin 'capture' para permitir elegir Galería */}
-        <input id="cameraInput" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
-
-        {preview && (
-          <div style={{ marginTop: '10px' }}>
-            <img src={preview} alt="Vista previa" style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '15px', border: '3px solid #fff' }} />
-          </div>
-        )}
-
-        {preview && !cargando && (
-          <button type="submit" style={{ 
-              padding: '12px 25px', backgroundColor: '#3498db', color: 'white', 
-              border: 'none', borderRadius: '8px', fontSize: '1rem', cursor: 'pointer', fontWeight: 'bold'
+          {/* BOTÓN DE SUBIDA */}
+          <label style={{ 
+              backgroundColor: '#2ecc71', color: 'white', padding: '12px 25px', 
+              borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold', display: 'inline-block'
           }}>
-            🔍 Analizar Planta
-          </button>
-        )}
+            📸 Tomar / Subir Foto
+            <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+          </label>
 
-        {cargando && <p style={{fontSize: '18px', fontWeight: 'bold', color: '#fff', textShadow: '1px 1px 2px #000'}}>Analizando cultivo... ⏳</p>}
+          {/* BOTÓN DE ANALIZAR */}
+          {imagen && !cargando && (
+             <button onClick={handleSubmit} style={{ 
+                 display: 'block', margin: '20px auto 0', padding: '10px 30px', 
+                 backgroundColor: '#3498db', color: 'white', border: 'none', 
+                 borderRadius: '5px', fontSize: '1.1rem', cursor: 'pointer', fontWeight: 'bold'
+             }}>
+                 🔍 Analizar Planta
+             </button>
+          )}
 
-      </form>
+          {cargando && <p style={{ marginTop: '15px', fontWeight: 'bold', color: '#555' }}>Analizando cultivo... ⏳</p>}
+      </div>
 
-      {/* RESULTADOS */}
+      {/* === ZONA DE RESULTADO (LECTOR DE MARKDOWN) === */}
       {resultado && (
-        <div style={{ marginTop: '30px', padding: '25px', backgroundColor: 'rgba(255, 255, 255, 0.95)', borderRadius: '15px', border: '1px solid #2ecc71', textAlign: 'left', color: '#333' }}>
-          
-          <h2 style={{ color: '#27ae60', marginTop: 0, borderBottom: '2px solid #a8e6cf', paddingBottom: '10px' }}>
-            ✅ Diagnóstico: {resultado.nombre}
-          </h2>
-          
-          <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6' }}>
-            <strong>🔎 Descripción: </strong> {resultado.descripcion}
-          </p>
-
-          <div style={{ marginTop: '20px' }}>
-            <h4 style={{ color: '#d35400', marginBottom: '10px' }}>⚠️ ¿Por qué sucede? (Causas)</h4>
-            <ul style={{ paddingLeft: '25px', color: '#444' }}>
-              {resultado.causas && resultado.causas.map((causa, index) => (
-                <li key={index} style={{ marginBottom: '8px' }}>{causa}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div style={{ marginTop: '20px' }}>
-            <h4 style={{ color: '#2980b9', marginBottom: '10px' }}>🛠️ Solución recomendada</h4>
-            <ul style={{ paddingLeft: '25px', color: '#444' }}>
-              {resultado.tratamiento && resultado.tratamiento.map((solucion, index) => (
-                <li key={index} style={{ marginBottom: '8px' }}>{solucion}</li>
-              ))}
-            </ul>
-          </div>
-
+        <div style={{ 
+            textAlign: 'left', 
+            background: 'rgba(255, 255, 255, 0.95)', 
+            padding: '30px', 
+            borderRadius: '15px', 
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            color: '#2c3e50',
+            lineHeight: '1.6'
+        }}>
+            {/* ESTA ES LA CLAVE: ReactMarkdown lee el texto bonito */}
+            <ReactMarkdown>{resultado}</ReactMarkdown>
         </div>
       )}
+
     </div>
   );
 }
