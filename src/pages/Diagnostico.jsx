@@ -11,7 +11,7 @@ function Diagnostico() {
   const [resultado, setResultado] = useState(null);
   const [cargando, setCargando] = useState(false);
 
-  // ===  GUARDIA DE SEGURIDAD ===
+  // === 👮‍♂️ GUARDIA DE SEGURIDAD ===
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -60,15 +60,21 @@ function Diagnostico() {
       
       <h2 style={{ textShadow: '2px 2px 4px #000', color: 'white', marginBottom: '30px' }}>Doctor de Plantas 🌿</h2>
 
-      {/* --- CAMBIO AQUÍ ---
-          Quitamos el background blanco, el padding y el borde.
-          Solo dejamos un margen inferior para separarlo del resultado.
+      {/* === CAMBIO AQUÍ PARA CENTRAR === 
+          Usamos 'display: flex' y 'flexDirection: column' con 'alignItems: center'.
+          Esto obliga a todo lo que esté adentro (foto, botones) a irse al centro.
       */}
-      <div style={{ marginBottom: '30px' }}>
+      <div style={{ 
+          marginBottom: '30px', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          gap: '20px' // Espacio automático entre elementos
+      }}>
           
           {/* VISTA PREVIA */}
           {preview && (
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <img src={preview} alt="Vista previa" style={{ maxWidth: '100%', maxHeight: '350px', borderRadius: '15px', boxShadow: '0 8px 20px rgba(0,0,0,0.5)', border: '3px solid white' }} />
             </div>
           )}
@@ -77,7 +83,8 @@ function Diagnostico() {
           <label style={{ 
               backgroundColor: '#2ecc71', color: 'white', padding: '12px 30px', fontSize: '1.1rem',
               borderRadius: '30px', cursor: 'pointer', fontWeight: 'bold', display: 'inline-block',
-              boxShadow: '0 4px 10px rgba(0,0,0,0.3)', transition: 'all 0.3s ease'
+              boxShadow: '0 4px 10px rgba(0,0,0,0.3)', transition: 'all 0.3s ease',
+              maxWidth: '300px' // Para que no se estire demasiado en móviles
           }}>
             📸 Tomar / Subir Foto
             <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
@@ -86,20 +93,17 @@ function Diagnostico() {
           {/* BOTÓN DE ANALIZAR */}
           {imagen && !cargando && (
              <button onClick={handleSubmit} style={{ 
-                 display: 'block', margin: '20px auto 0', padding: '12px 40px', 
+                 padding: '12px 40px', 
                  backgroundColor: '#3498db', color: 'white', border: 'none', 
                  borderRadius: '30px', fontSize: '1.2rem', cursor: 'pointer', fontWeight: 'bold',
-                 boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
+                 boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                 maxWidth: '300px'
              }}>
                  🔍 Analizar Planta
              </button>
           )}
 
-          {/* --- CAMBIO AQUÍ ---
-              Cambiamos el color del texto de carga a BLANCO con sombra negra
-              para que se lea bien sobre el fondo oscuro.
-          */}
-          {cargando && <p style={{ marginTop: '20px', fontWeight: 'bold', color: 'white', fontSize: '1.2rem', textShadow: '1px 1px 3px black' }}>Analizando cultivo... ⏳</p>}
+          {cargando && <p style={{ fontWeight: 'bold', color: 'white', fontSize: '1.2rem', textShadow: '1px 1px 3px black' }}>Analizando cultivo... ⏳</p>}
       </div>
 
       {/* === ZONA DE RESULTADO === */}
