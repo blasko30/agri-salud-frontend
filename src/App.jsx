@@ -3,8 +3,9 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Diagnostico from './pages/Diagnostico';
 import Historial from './pages/Historial';
-import Perfil from './pages/Perfil'; // <--- 1. IMPORTAMOS LA NUEVA PÁGINA
+import Perfil from './pages/Perfil'; 
 import Clima from './components/Clima';
+import Luna from './components/Luna';
 
 // === COMPONENTE DE NAVEGACIÓN INTELIGENTE ===
 function Navigation() {
@@ -17,7 +18,7 @@ function Navigation() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('plan');
-    alert("Sesión cerrada correctamente 👋");
+    alert("Sesión cerrada correctamente ");
     navigate('/login');
   };
 
@@ -82,6 +83,9 @@ function Home() {
       </p>
       
       <Clima /> 
+      <Luna /> {/* <--- AQUÍ LO AGREGAS */}
+
+      <div style={{ marginTop: '40px' }}></div>
 
       <div style={{ marginTop: '40px' }}>
         <Link to="/diagnostico" style={{
@@ -94,7 +98,7 @@ function Home() {
           boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
           textDecoration: 'none'
         }}>
-          🚀 Comenzar Diagnóstico
+           Comenzar Diagnóstico
         </Link>
       </div>
     </div>
@@ -112,7 +116,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/diagnostico" element={<Diagnostico />} />
         <Route path="/historial" element={<Historial />} />
-        <Route path="/perfil" element={<Perfil />} /> {/* <--- 2. NUEVA RUTA AGREGADA */}
+        <Route path="/perfil" element={<Perfil />} /> 
       </Routes>
     </BrowserRouter>
   );
